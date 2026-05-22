@@ -1,0 +1,1489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PolSciPro QUIZ</title>
+<style>
+  /* ===== CSS VARIABLES ===== */
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --border: #1e2d45;
+    --accent: #3b82f6;
+    --accent2: #60a5fa;
+    --gold: #f59e0b;
+    --green: #10b981;
+    --red: #ef4444;
+    --text: #f1f5f9;
+    --muted: #64748b;
+    --subtle: #94a3b8;
+    --radius: 14px;
+    --radius-sm: 8px;
+    --font-display: 'Georgia', 'Times New Roman', serif;
+    --font-body: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    --shadow: 0 4px 24px rgba(0,0,0,0.4);
+    --shadow-lg: 0 8px 48px rgba(0,0,0,0.6);
+    --glow: 0 0 20px rgba(59,130,246,0.25);
+  }
+
+  /* ===== RESET & BASE ===== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ===== BACKGROUND GRID ===== */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(59,130,246,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(59,130,246,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ===== LAYOUT ===== */
+  #app {
+    position: relative;
+    z-index: 1;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 24px 16px 80px;
+    min-height: 100vh;
+  }
+
+  /* ===== HEADER ===== */
+  .header {
+    text-align: center;
+    padding: 40px 0 32px;
+    position: relative;
+  }
+  .header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(59,130,246,0.1);
+    border: 1px solid rgba(59,130,246,0.25);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent2);
+    margin-bottom: 16px;
+  }
+  .header-badge::before { content: '◆'; font-size: 8px; }
+  .logo {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 5vw, 44px);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #f1f5f9 0%, #94a3b8 50%, #3b82f6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+    margin-bottom: 8px;
+  }
+  .logo span { color: var(--accent); -webkit-text-fill-color: var(--accent); }
+  .tagline {
+    font-size: 15px;
+    color: var(--muted);
+    letter-spacing: 0.01em;
+  }
+
+  /* ===== SCREENS ===== */
+  .screen { display: none; animation: fadeIn 0.35s ease; }
+  .screen.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+
+  /* ===== START SCREEN ===== */
+  .start-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 40px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    margin-top: 8px;
+  }
+  .start-icon {
+    width: 72px; height: 72px;
+    background: linear-gradient(135deg, rgba(59,130,246,0.2), rgba(96,165,250,0.1));
+    border: 1px solid rgba(59,130,246,0.3);
+    border-radius: 20px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px;
+    margin: 0 auto 24px;
+  }
+  .start-card h2 { font-family: var(--font-display); font-size: 24px; margin-bottom: 10px; }
+  .start-card p { color: var(--subtle); font-size: 15px; margin-bottom: 32px; line-height: 1.7; }
+  .stats-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 12px; margin-bottom: 32px;
+  }
+  .stat-item {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 16px 12px;
+    text-align: center;
+  }
+  .stat-num { font-size: 26px; font-weight: 700; color: var(--accent2); font-family: var(--font-display); }
+  .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 4px; }
+
+  /* ===== BUTTONS ===== */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 13px 28px;
+    border-radius: var(--radius-sm);
+    font-size: 15px; font-weight: 600;
+    cursor: pointer; border: none;
+    transition: all 0.2s ease;
+    letter-spacing: 0.01em;
+    font-family: var(--font-body);
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, #2563eb, #3b82f6);
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(59,130,246,0.35), var(--glow);
+    width: 100%;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(59,130,246,0.5), var(--glow); }
+  .btn-primary:active { transform: none; }
+  .btn-secondary {
+    background: var(--surface2);
+    color: var(--subtle);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover { background: var(--border); color: var(--text); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--subtle);
+    border: 1px solid var(--border);
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent2); }
+  .btn-sm { padding: 9px 18px; font-size: 13px; }
+  .btn-gold {
+    background: linear-gradient(135deg, #d97706, #f59e0b);
+    color: #000;
+    box-shadow: 0 4px 16px rgba(245,158,11,0.3);
+    width: 100%;
+  }
+  .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(245,158,11,0.45); }
+  .btn-danger { background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+  .btn-danger:hover { background: rgba(239,68,68,0.25); }
+
+  /* ===== QUIZ SCREEN ===== */
+  .quiz-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px; gap: 16px;
+  }
+  .q-counter {
+    font-size: 13px; color: var(--muted);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 6px 14px;
+    white-space: nowrap;
+  }
+  .q-counter strong { color: var(--text); }
+  .score-pill {
+    display: flex; gap: 12px; align-items: center;
+    font-size: 13px;
+  }
+  .score-correct { color: var(--green); font-weight: 700; }
+  .score-incorrect { color: var(--red); font-weight: 700; }
+
+  /* ===== PROGRESS BAR ===== */
+  .progress-wrap {
+    margin-bottom: 24px;
+    position: relative;
+  }
+  .progress-track {
+    height: 5px;
+    background: var(--surface2);
+    border-radius: 100px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #2563eb, #60a5fa);
+    border-radius: 100px;
+    transition: width 0.5s cubic-bezier(.4,0,.2,1);
+    box-shadow: 0 0 10px rgba(96,165,250,0.4);
+  }
+  .progress-label {
+    font-size: 11px; color: var(--muted);
+    text-align: right; margin-top: 5px;
+  }
+
+  /* ===== QUESTION CARD ===== */
+  .question-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 32px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+  }
+  .question-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #2563eb, #60a5fa, #a78bfa);
+  }
+  .question-meta {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
+  }
+  .difficulty-badge {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 3px 10px; border-radius: 100px;
+  }
+  .diff-easy { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
+  .diff-medium { background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); }
+  .diff-hard { background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+  .topic-tag {
+    font-size: 10px; color: var(--muted);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 3px 10px; border-radius: 100px;
+    text-transform: uppercase; letter-spacing: 0.08em;
+  }
+  .question-text {
+    font-size: clamp(16px, 2.5vw, 19px);
+    font-weight: 600;
+    line-height: 1.55;
+    color: var(--text);
+  }
+
+  /* ===== ANSWER OPTIONS ===== */
+  .options-grid {
+    display: flex; flex-direction: column; gap: 10px;
+    margin-bottom: 20px;
+  }
+  .option {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 15px 18px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    display: flex; align-items: flex-start; gap: 14px;
+    text-align: left;
+    font-family: var(--font-body);
+    font-size: 15px;
+    color: var(--text);
+    width: 100%;
+  }
+  .option:hover:not(:disabled) {
+    border-color: var(--accent);
+    background: rgba(59,130,246,0.06);
+    transform: translateX(3px);
+  }
+  .option:disabled { cursor: default; }
+  .option-letter {
+    width: 28px; height: 28px; min-width: 28px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+    color: var(--muted);
+    transition: all 0.18s;
+    margin-top: 0;
+  }
+  .option:hover:not(:disabled) .option-letter {
+    border-color: var(--accent);
+    color: var(--accent2);
+  }
+  .option.correct {
+    border-color: var(--green) !important;
+    background: rgba(16,185,129,0.1) !important;
+    transform: none !important;
+  }
+  .option.correct .option-letter { background: var(--green); border-color: var(--green); color: #000; }
+  .option.wrong {
+    border-color: var(--red) !important;
+    background: rgba(239,68,68,0.08) !important;
+  }
+  .option.wrong .option-letter { background: var(--red); border-color: var(--red); color: #fff; }
+  .option.selected-correct { border-color: var(--green); background: rgba(16,185,129,0.12); }
+  .option.selected-wrong { border-color: var(--red); background: rgba(239,68,68,0.1); }
+  .option-text { flex: 1; line-height: 1.5; }
+
+  /* ===== FEEDBACK ===== */
+  .feedback-box {
+    border-radius: var(--radius-sm);
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    display: none;
+    animation: slideDown 0.25s ease;
+  }
+  @keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+  .feedback-box.correct { background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.3); color: #34d399; }
+  .feedback-box.wrong { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.25); color: #f87171; }
+  .feedback-box.show { display: block; }
+  .feedback-icon { font-size: 16px; margin-right: 6px; }
+
+  /* ===== NAV BUTTONS ===== */
+  .nav-buttons {
+    display: flex; gap: 10px; justify-content: space-between; align-items: center;
+  }
+  .nav-buttons .btn { flex: 1; }
+
+  /* ===== RESULTS SCREEN ===== */
+  .results-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 40px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  .results-card::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(59,130,246,0.08) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .score-circle {
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    background: conic-gradient(var(--accent) calc(var(--pct) * 1%), var(--surface2) 0);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 28px;
+    box-shadow: 0 0 32px rgba(59,130,246,0.2);
+    position: relative;
+  }
+  .score-circle-inner {
+    width: 110px; height: 110px;
+    border-radius: 50%;
+    background: var(--surface);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+  }
+  .score-pct {
+    font-family: var(--font-display);
+    font-size: 32px; font-weight: 700;
+    color: var(--text);
+    line-height: 1;
+  }
+  .score-pct-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+  .performance-label {
+    font-size: 22px; font-weight: 700;
+    font-family: var(--font-display);
+    margin-bottom: 6px;
+  }
+  .performance-sub { font-size: 14px; color: var(--muted); margin-bottom: 28px; }
+  .result-stats {
+    display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 32px;
+  }
+  .result-stat {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 18px 12px;
+  }
+  .result-stat-num { font-size: 24px; font-weight: 700; font-family: var(--font-display); }
+  .result-stat-num.green { color: var(--green); }
+  .result-stat-num.red { color: var(--red); }
+  .result-stat-num.blue { color: var(--accent2); }
+  .result-stat-label { font-size: 11px; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.07em; }
+
+  /* ===== REVIEW SCREEN ===== */
+  .review-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow);
+  }
+  .review-item-header {
+    display: flex; gap: 10px; align-items: flex-start; margin-bottom: 14px;
+  }
+  .review-q-num {
+    background: rgba(239,68,68,0.15);
+    border: 1px solid rgba(239,68,68,0.3);
+    color: #f87171;
+    border-radius: 6px;
+    padding: 2px 9px;
+    font-size: 12px; font-weight: 700;
+    white-space: nowrap; margin-top: 2px;
+  }
+  .review-q-text { font-size: 15px; font-weight: 600; line-height: 1.5; }
+  .review-answers { display: flex; flex-direction: column; gap: 7px; }
+  .review-answer {
+    border-radius: 7px; padding: 10px 14px; font-size: 14px;
+    display: flex; gap: 8px; align-items: flex-start;
+  }
+  .review-answer.correct { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.25); color: #34d399; }
+  .review-answer.wrong { background: rgba(239,68,68,0.07); border: 1px solid rgba(239,68,68,0.2); color: #f87171; }
+  .review-answer-icon { font-size: 14px; margin-top: 1px; }
+  .review-section-title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    margin-bottom: 20px;
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  /* ===== MISC ===== */
+  .divider { height: 1px; background: var(--border); margin: 20px 0; }
+  .text-center { text-align: center; }
+  .mt-16 { margin-top: 16px; }
+  .mt-12 { margin-top: 12px; }
+  .btn-row { display: flex; gap: 10px; }
+  .btn-row .btn { flex: 1; }
+  .empty-review {
+    text-align: center; padding: 40px;
+    color: var(--muted); font-size: 15px;
+  }
+  .empty-review .big { font-size: 40px; margin-bottom: 10px; }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 600px) {
+    .stats-grid { grid-template-columns: repeat(3,1fr); }
+    .result-stats { grid-template-columns: repeat(3,1fr); }
+    .question-card { padding: 24px 20px; }
+    .start-card { padding: 28px 20px; }
+    .results-card { padding: 28px 20px; }
+    .btn-row { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-badge">Political Science</div>
+    <div class="logo">PolSci<span>Pro</span> QUIZ</div>
+    <div class="tagline">Complete Exam Preparation · 10 Lectures · 110 Questions</div>
+  </div>
+
+  <!-- START SCREEN -->
+  <div id="screen-start" class="screen active">
+    <div class="start-card">
+      <div class="start-icon">🎓</div>
+      <h2>Ready to test your knowledge?</h2>
+      <p>Questions drawn from all 10 lectures covering Political Science fundamentals, Political Thought, Power, Ideologies, Digital Security, and International Relations.</p>
+      <div class="stats-grid">
+        <div class="stat-item"><div class="stat-num">110</div><div class="stat-label">Questions</div></div>
+        <div class="stat-item"><div class="stat-num">10</div><div class="stat-label">Lectures</div></div>
+        <div class="stat-item"><div class="stat-num">3</div><div class="stat-label">Difficulty Levels</div></div>
+      </div>
+      <button class="btn btn-primary" onclick="startQuiz()">🚀 Start Quiz</button>
+    </div>
+  </div>
+
+  <!-- QUIZ SCREEN -->
+  <div id="screen-quiz" class="screen">
+    <div class="quiz-header">
+      <div class="q-counter">Question <strong id="q-num">1</strong> of <strong id="q-total">110</strong></div>
+      <div class="score-pill">
+        <span class="score-correct">✓ <span id="score-correct">0</span></span>
+        <span class="score-incorrect">✗ <span id="score-incorrect">0</span></span>
+      </div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+      <div class="progress-label" id="progress-label">0% complete</div>
+    </div>
+    <div class="question-card">
+      <div class="question-meta">
+        <span class="difficulty-badge" id="diff-badge">Easy</span>
+        <span class="topic-tag" id="topic-tag">Lecture 1</span>
+      </div>
+      <div class="question-text" id="question-text">Loading...</div>
+    </div>
+    <div class="options-grid" id="options-grid"></div>
+    <div class="feedback-box" id="feedback-box"></div>
+    <div class="nav-buttons">
+      <button class="btn btn-ghost" id="btn-prev" onclick="prevQuestion()">← Previous</button>
+      <button class="btn btn-primary" id="btn-next" onclick="nextQuestion()">Next →</button>
+    </div>
+  </div>
+
+  <!-- RESULTS SCREEN -->
+  <div id="screen-results" class="screen">
+    <div class="results-card">
+      <div class="score-circle" id="score-circle">
+        <div class="score-circle-inner">
+          <div class="score-pct" id="res-pct">0%</div>
+          <div class="score-pct-label">Score</div>
+        </div>
+      </div>
+      <div class="performance-label" id="perf-label">Well Done!</div>
+      <div class="performance-sub" id="perf-sub">Keep studying to improve.</div>
+      <div class="result-stats">
+        <div class="result-stat">
+          <div class="result-stat-num green" id="res-correct">0</div>
+          <div class="result-stat-label">Correct</div>
+        </div>
+        <div class="result-stat">
+          <div class="result-stat-num red" id="res-incorrect">0</div>
+          <div class="result-stat-label">Incorrect</div>
+        </div>
+        <div class="result-stat">
+          <div class="result-stat-num blue" id="res-total">0</div>
+          <div class="result-stat-label">Total</div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-gold" onclick="showReview()">📋 Review Mistakes</button>
+      </div>
+      <div class="mt-12 btn-row">
+        <button class="btn btn-secondary" onclick="restartQuiz()">🔄 Restart Quiz</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- REVIEW SCREEN -->
+  <div id="screen-review" class="screen">
+    <div class="review-section-title">
+      <span>📋</span> Reviewing Incorrect Answers
+    </div>
+    <div id="review-list"></div>
+    <div class="mt-16 btn-row">
+      <button class="btn btn-primary" onclick="showResults()">← Back to Results</button>
+      <button class="btn btn-ghost" onclick="restartQuiz()">🔄 Restart</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ===================================================
+   POLSCIPRO QUIZ — JAVASCRIPT ENGINE
+   110 Questions across 10 lectures
+=================================================== */
+
+// ===== QUESTION DATABASE =====
+const ALL_QUESTIONS = [
+  // ======== LECTURE 1: Political Science as a Science ========
+  {
+    q: "What ancient Greek word does the term 'politics' derive from?",
+    opts: ["Logos", "Polis", "Demos", "Kratos"],
+    ans: 1, diff: "easy", topic: "L1: PolSci as Science"
+  },
+  {
+    q: "Harold Lasswell defined politics as:",
+    opts: ["The art of the possible", "The authoritative allocation of values", "Who gets what, when, and how", "Acting in concert"],
+    ans: 2, diff: "easy", topic: "L1: PolSci as Science"
+  },
+  {
+    q: "Which scholar defined politics as the 'authoritative allocation of values'?",
+    opts: ["Harold Lasswell", "Jean Bodin", "David Easton", "Max Weber"],
+    ans: 2, diff: "easy", topic: "L1: PolSci as Science"
+  },
+  {
+    q: "Aristotle described politics as the:",
+    opts: ["Science of the state", "Master science", "Art of governance", "Study of institutions"],
+    ans: 1, diff: "easy", topic: "L1: PolSci as Science"
+  },
+  {
+    q: "Who was the first to use the term 'political science' in the 16th century?",
+    opts: ["Aristotle", "Max Weber", "Jean Bodin", "Montesquieu"],
+    ans: 2, diff: "medium", topic: "L1: PolSci as Science"
+  },
+  {
+    q: "Max Weber defined the state as the institution holding the monopoly on:",
+    opts: ["Tax collection", "Legitimate use of physical force", "Law-making authority", "Economic production"],
+    ans: 1, diff: "easy", topic: "L1: PolSci as Science"
+  },
+  {
+    q: "Hannah Arendt defined political power as:",
+    opts: ["The ability to command obedience", "Acting in concert", "Control over material resources", "The right to use force"],
+    ans: 1, diff: "medium", topic: "L1: PolSci as Science"
+  },
+  {
+    q: "Which of the following is NOT one of the five functions of political science?",
+    opts: ["Descriptive", "Explanatory", "Coercive", "Predictive"],
+    ans: 2, diff: "easy", topic: "L1: PolSci as Science"
+  },
+  {
+    q: "The view that politics occurs only within formal institutions like parliaments and courts is associated with:",
+    opts: ["Politics as process (Colin Hay)", "Politics as arena (Andrew Heywood)", "Authoritative allocation (Easton)", "Systemic politics (Parsons)"],
+    ans: 1, diff: "medium", topic: "L1: PolSci as Science"
+  },
+  {
+    q: "Jean Bodin defined sovereignty as:",
+    opts: ["The right to tax citizens", "Absolute and perpetual power of the state", "The will of the majority", "Government by consent"],
+    ans: 1, diff: "medium", topic: "L1: PolSci as Science"
+  },
+  {
+    q: "Which research method uses statistical models and surveys to study politics?",
+    opts: ["Case study", "Qualitative", "Quantitative", "Historical"],
+    ans: 2, diff: "easy", topic: "L1: PolSci as Science"
+  },
+  {
+    q: "Kazakhstan's 2022 constitutional reforms are an example of which subfield of political science?",
+    opts: ["International relations", "Public law and political theory", "Comparative politics and public administration", "Both B and C"],
+    ans: 3, diff: "hard", topic: "L1: PolSci as Science"
+  },
+
+  // ======== LECTURE 2: History of Political Thought ========
+  {
+    q: "What is the Chinese political concept of governing through minimal intervention and 'non-action'?",
+    opts: ["Li", "Wu wei", "Ren", "Dao Jing"],
+    ans: 1, diff: "medium", topic: "L2: Political Thought"
+  },
+  {
+    q: "Plato's ideal state in 'The Republic' was governed by:",
+    opts: ["Elected democratic representatives", "Philosopher-kings from the Ruler class", "Military guardians with hereditary succession", "A council of all three classes"],
+    ans: 1, diff: "easy", topic: "L2: Political Thought"
+  },
+  {
+    q: "According to Aristotle, which of the following is the BEST practical form of government?",
+    opts: ["Monarchy", "Aristocracy", "Polity", "Democracy"],
+    ans: 2, diff: "medium", topic: "L2: Political Thought"
+  },
+  {
+    q: "Aristotle classified how many forms of government in total?",
+    opts: ["3", "4", "6", "8"],
+    ans: 2, diff: "medium", topic: "L2: Political Thought"
+  },
+  {
+    q: "Machiavelli's famous statement 'It is better to be feared than loved' appears in which work?",
+    opts: ["Discourses on Livy", "Utopia", "The Prince", "Leviathan"],
+    ans: 2, diff: "easy", topic: "L2: Political Thought"
+  },
+  {
+    q: "Thomas Hobbes described the state of nature as:",
+    opts: ["Peaceful but insecure", "Noble and uncorrupted", "Solitary, poor, nasty, brutish and short", "Governed by natural rights"],
+    ans: 2, diff: "easy", topic: "L2: Political Thought"
+  },
+  {
+    q: "John Locke's natural rights included:",
+    opts: ["Liberty, equality and fraternity", "Life, liberty and property", "Safety, happiness and prosperity", "Education, justice and security"],
+    ans: 1, diff: "easy", topic: "L2: Political Thought"
+  },
+  {
+    q: "Rousseau's concept of the 'general will' forms the basis of:",
+    opts: ["Absolute monarchy", "Representative democracy", "Direct/participatory democracy", "Technocratic governance"],
+    ans: 2, diff: "medium", topic: "L2: Political Thought"
+  },
+  {
+    q: "Augustine of Hippo's 'Two Cities' concept refers to:",
+    opts: ["Athens and Rome as dual models of governance", "The City of God (eternal) and City of Man (temporal)", "Rural and urban forms of political life", "Church-governed and king-governed territories"],
+    ans: 1, diff: "medium", topic: "L2: Political Thought"
+  },
+  {
+    q: "Thomas Aquinas synthesized Christian theology with which ancient philosopher?",
+    opts: ["Socrates", "Plato", "Aristotle", "Epicurus"],
+    ans: 2, diff: "easy", topic: "L2: Political Thought"
+  },
+  {
+    q: "Kautilya's 'Arthashastra' is most analogous to which Western thinker's approach to politics?",
+    opts: ["John Locke", "Thomas More", "Niccolò Machiavelli", "Jean-Jacques Rousseau"],
+    ans: 2, diff: "medium", topic: "L2: Political Thought"
+  },
+  {
+    q: "Abai Qunanbaiuly's famous quote 'To know Russian is to open one's eyes to the world' reflects which intellectual tradition?",
+    opts: ["Religious conservatism", "Kazakh Enlightenment reformism", "Marxist class analysis", "Legalist governance theory"],
+    ans: 1, diff: "medium", topic: "L2: Political Thought"
+  },
+  {
+    q: "Al-Farabi is considered the 'Second Teacher' — second to which thinker?",
+    opts: ["Plato", "Socrates", "Aristotle", "Confucius"],
+    ans: 2, diff: "hard", topic: "L2: Political Thought"
+  },
+  {
+    q: "Edmund Burke is regarded as the father of:",
+    opts: ["Classical liberalism", "Modern conservatism", "Democratic socialism", "Anarchist thought"],
+    ans: 1, diff: "easy", topic: "L2: Political Thought"
+  },
+  {
+    q: "Legalism in ancient China held that human nature is fundamentally:",
+    opts: ["Good and can be improved through education", "Selfish and only controlled through strict law", "Variable and shaped by circumstances", "Spiritual and guided by heaven"],
+    ans: 1, diff: "medium", topic: "L2: Political Thought"
+  },
+
+  // ======== LECTURE 3: Moral Foundations of Politics ========
+  {
+    q: "Moral Foundation Theory was developed by:",
+    opts: ["Aristotle and Aquinas", "Jonathan Haidt and Craig Joseph", "Jeremy Bentham and John Stuart Mill", "Hannah Arendt and Jürgen Habermas"],
+    ans: 1, diff: "easy", topic: "L3: Moral Foundations"
+  },
+  {
+    q: "How many moral foundations are identified in Haidt's Moral Foundation Theory?",
+    opts: ["4", "5", "6", "8"],
+    ans: 2, diff: "easy", topic: "L3: Moral Foundations"
+  },
+  {
+    q: "Which moral foundation involves resistance to domination, unjust constraints and systemic oppression?",
+    opts: ["Sanctity/Degradation", "Authority/Subversion", "Loyalty/Betrayal", "Liberty/Oppression"],
+    ans: 3, diff: "medium", topic: "L3: Moral Foundations"
+  },
+  {
+    q: "Research based on Haidt's theory found that political liberals tend to especially emphasize which two foundations?",
+    opts: ["Loyalty and Authority", "Sanctity and Loyalty", "Care and Fairness", "Authority and Sanctity"],
+    ans: 2, diff: "medium", topic: "L3: Moral Foundations"
+  },
+  {
+    q: "The trolley problem is used to illustrate limitations of which ethical theory?",
+    opts: ["Virtue ethics", "Deontological ethics", "Utilitarianism", "Social contract theory"],
+    ans: 2, diff: "easy", topic: "L3: Moral Foundations"
+  },
+  {
+    q: "What key finding emerged from Milgram's obedience experiment?",
+    opts: ["Most people refused to harm others under any circumstances", "About 65% of participants delivered the maximum 'electric shock'", "Only military personnel would follow harmful orders", "Social class determined obedience levels"],
+    ans: 1, diff: "easy", topic: "L3: Moral Foundations"
+  },
+  {
+    q: "The Stanford Prison Experiment was conducted by:",
+    opts: ["Stanley Milgram", "Philip Zimbardo", "Jonathan Haidt", "Hannah Arendt"],
+    ans: 1, diff: "easy", topic: "L3: Moral Foundations"
+  },
+  {
+    q: "Hannah Arendt coined the phrase 'banality of evil' in reference to the trial of:",
+    opts: ["Heinrich Himmler", "Josef Mengele", "Adolf Eichmann", "Hermann Göring"],
+    ans: 2, diff: "medium", topic: "L3: Moral Foundations"
+  },
+  {
+    q: "Utilitarianism was developed by which thinkers?",
+    opts: ["Kant and Hegel", "Marx and Engels", "Bentham and Mill", "Hobbes and Locke"],
+    ans: 2, diff: "easy", topic: "L3: Moral Foundations"
+  },
+  {
+    q: "According to Arendt's 'banality of evil,' how does evil primarily manifest?",
+    opts: ["Through monstrous personal cruelty", "Through thoughtlessness and blind obedience to authority", "Through genetic predisposition to violence", "Through ideological fanaticism alone"],
+    ans: 1, diff: "medium", topic: "L3: Moral Foundations"
+  },
+  {
+    q: "The Stanford Prison Experiment was terminated after how many days (planned for 2 weeks)?",
+    opts: ["3 days", "6 days", "10 days", "12 days"],
+    ans: 1, diff: "hard", topic: "L3: Moral Foundations"
+  },
+  {
+    q: "Marxism argues that history is fundamentally driven by:",
+    opts: ["Great men and their decisions", "Class struggle and contradictions of production", "Divine providence and moral progress", "Geographic and environmental factors"],
+    ans: 1, diff: "easy", topic: "L3: Moral Foundations"
+  },
+
+  // ======== LECTURE 4: Political Power ========
+  {
+    q: "French and Raven identified how many forms of power in 1960?",
+    opts: ["3", "4", "5", "6"],
+    ans: 2, diff: "easy", topic: "L4: Political Power"
+  },
+  {
+    q: "A charismatic political leader like Gandhi exemplifies which type of power?",
+    opts: ["Coercive power", "Reward power", "Referent power", "Legitimate power"],
+    ans: 2, diff: "easy", topic: "L4: Political Power"
+  },
+  {
+    q: "Max Weber identified three types of legitimate authority. Which of these is NOT one of them?",
+    opts: ["Traditional", "Charismatic", "Rational-Legal", "Democratic"],
+    ans: 3, diff: "easy", topic: "L4: Political Power"
+  },
+  {
+    q: "Montesquieu's separation of powers was articulated in which work?",
+    opts: ["The Social Contract", "The Spirit of the Laws", "Six Books of the Commonwealth", "Politics as a Vocation"],
+    ans: 1, diff: "medium", topic: "L4: Political Power"
+  },
+  {
+    q: "Which branch of government in Kazakhstan's system is represented by the Majilis and Senate?",
+    opts: ["Executive", "Judicial", "Legislative", "Administrative"],
+    ans: 2, diff: "easy", topic: "L4: Political Power"
+  },
+  {
+    q: "Joseph Nye's concept of 'soft power' refers to:",
+    opts: ["Economic sanctions and trade restrictions", "Influence through culture, values and ideas", "Military deterrence without actual use of force", "Diplomatic negotiations in multilateral forums"],
+    ans: 1, diff: "medium", topic: "L4: Political Power"
+  },
+  {
+    q: "Political manipulation as a form of power involves:",
+    opts: ["Using physical force against opponents", "Offering economic incentives for compliance", "Concealing intentions while pursuing goals", "Acting through formal legal authority"],
+    ans: 2, diff: "medium", topic: "L4: Political Power"
+  },
+  {
+    q: "Weber's 'rational-legal' authority is best exemplified by:",
+    opts: ["British monarchy's hereditary succession", "Gandhi's moral leadership", "Democratic elections under a constitution", "A tribal elder's traditional guidance"],
+    ans: 2, diff: "easy", topic: "L4: Political Power"
+  },
+  {
+    q: "Legitimacy in political science refers to:",
+    opts: ["The legal right to govern as defined by statute", "Citizens' belief that those in power have the right to rule", "International recognition of a government", "Military capacity to enforce compliance"],
+    ans: 1, diff: "medium", topic: "L4: Political Power"
+  },
+  {
+    q: "Kenessary Kassymov, who united Kazakh tribes against Russian colonization, exemplifies which type of Weberian authority?",
+    opts: ["Rational-legal", "Traditional", "Charismatic", "Expert"],
+    ans: 2, diff: "hard", topic: "L4: Political Power"
+  },
+
+  // ======== LECTURE 5: Leadership and Elites ========
+  {
+    q: "Vilfredo Pareto's famous phrase 'History is the graveyard of aristocracies' refers to:",
+    opts: ["The decline of monarchy as a form of governance", "Elite circulation — ruling groups rise and fall over time", "The inevitable corruption of all political systems", "The failure of fascist regimes in Europe"],
+    ans: 1, diff: "medium", topic: "L5: Leadership & Elites"
+  },
+  {
+    q: "Robert Michels' 'Iron Law of Oligarchy' states that:",
+    opts: ["Only oligarchs should govern in capitalist economies", "All organizations eventually come under control of a small elite", "Democratic systems inevitably become oligarchies after 50 years", "Ruling families always reclaim power from democratic governments"],
+    ans: 1, diff: "easy", topic: "L5: Leadership & Elites"
+  },
+  {
+    q: "Gaetano Mosca argued that in every society:",
+    opts: ["Power must rotate among all social classes", "An organized minority dominates the unorganized majority", "Democratic elites are less corrupt than traditional ones", "All elites eventually lose power to the masses"],
+    ans: 1, diff: "medium", topic: "L5: Leadership & Elites"
+  },
+  {
+    q: "Robert Dahl's concept of 'Polyarchy' suggests that modern democracies are governed by:",
+    opts: ["A single unified power elite", "The general population through direct participation", "Multiple competing elite groups who have reached stable understandings", "Technocratic experts insulated from public pressure"],
+    ans: 2, diff: "medium", topic: "L5: Leadership & Elites"
+  },
+  {
+    q: "The term 'cult of personality' was first used in the Soviet context by whom?",
+    opts: ["Nikita Khrushchev (1956)", "Georgy Malenkov (1953)", "Leon Trotsky (1940)", "Vladimir Lenin (1922)"],
+    ans: 1, diff: "hard", topic: "L5: Leadership & Elites"
+  },
+  {
+    q: "In Pareto's framework, 'Foxes' represent elites who rule primarily through:",
+    opts: ["Military force and coercion", "Cunning, diplomacy and manipulation", "Traditional hereditary succession", "Democratic electoral legitimacy"],
+    ans: 1, diff: "medium", topic: "L5: Leadership & Elites"
+  },
+  {
+    q: "Transformational leadership is characterized by:",
+    opts: ["Using rewards and punishments to maintain compliance", "Inspiring followers toward a shared vision and deep change", "Strict adherence to bureaucratic procedures", "Concentrating authority in a single powerful figure"],
+    ans: 1, diff: "easy", topic: "L5: Leadership & Elites"
+  },
+  {
+    q: "Michels' famous quote 'Who says organization, says oligarchy' reflects which of the following?",
+    opts: ["Organizations naturally become more democratic as they grow", "Concentrated elite control is structurally inevitable in any organization", "All organizations eventually collapse without elite guidance", "Democratic parties are uniquely resistant to oligarchic tendencies"],
+    ans: 1, diff: "medium", topic: "L5: Leadership & Elites"
+  },
+  {
+    q: "Which leadership type is most associated with authoritarian regimes using propaganda, media control and coercion?",
+    opts: ["Bureaucratic", "Servant", "Authoritarian", "Charismatic"],
+    ans: 2, diff: "easy", topic: "L5: Leadership & Elites"
+  },
+  {
+    q: "The pluralist school of thought on power distribution is represented by which thinker?",
+    opts: ["C. Wright Mills", "Gaetano Mosca", "Robert Dahl", "Vilfredo Pareto"],
+    ans: 2, diff: "medium", topic: "L5: Leadership & Elites"
+  },
+
+  // ======== LECTURE 6: Ideologies, Culture & Consciousness ========
+  {
+    q: "The term 'ideology' was coined by:",
+    opts: ["Karl Marx in 1848", "Antoine de Tracy in 1796", "Edmund Burke in 1790", "John Stuart Mill in 1859"],
+    ans: 1, diff: "medium", topic: "L6: Ideologies & Culture"
+  },
+  {
+    q: "The Left/Right political distinction originates from:",
+    opts: ["The American Constitutional Convention of 1787", "The seating arrangement in the 1789 French Estates-General", "Marx and Engels' classification in the Communist Manifesto", "Weber's typology of political parties"],
+    ans: 1, diff: "medium", topic: "L6: Ideologies & Culture"
+  },
+  {
+    q: "Edmund Burke's conservative philosophy holds that society is best understood as:",
+    opts: ["A rational contract between free individuals", "An organic living organism shaped by tradition and custom", "A mechanism for redistributing economic resources equally", "A battlefield of competing class interests"],
+    ans: 1, diff: "medium", topic: "L6: Ideologies & Culture"
+  },
+  {
+    q: "Gabriel Almond and Sidney Verba's 'Civic Culture' study (1963) identified three types of political culture. Which of the following is NOT one of them?",
+    opts: ["Parochial", "Subject", "Participant", "Transformative"],
+    ans: 3, diff: "medium", topic: "L6: Ideologies & Culture"
+  },
+  {
+    q: "A citizen who is aware of the political system but sees themselves as a passive subject rather than an active participant demonstrates which political culture?",
+    opts: ["Parochial culture", "Subject culture", "Participant culture", "Civic culture"],
+    ans: 1, diff: "easy", topic: "L6: Ideologies & Culture"
+  },
+  {
+    q: "According to Norberto Bobbio, what is the fundamental difference between Left and Right?",
+    opts: ["Their views on the role of religion in politics", "Their attitude toward the concept of equality", "Their positions on free market economics", "Their support for national identity vs. cosmopolitanism"],
+    ans: 1, diff: "hard", topic: "L6: Ideologies & Culture"
+  },
+  {
+    q: "Political socialization refers to:",
+    opts: ["The process of nationalizing private industries", "How individuals acquire political values, beliefs and orientations", "Government programs that promote civic participation", "The spread of socialism through political parties"],
+    ans: 1, diff: "easy", topic: "L6: Ideologies & Culture"
+  },
+  {
+    q: "Herbert Hyman (1959) identified the family as the PRIMARY agent of political socialization because:",
+    opts: ["Children spend more time in school than with family", "Family is the first source of political identity, authority and fairness lessons", "Family income directly determines political preferences", "Parents always transmit their exact party affiliation to children"],
+    ans: 1, diff: "medium", topic: "L6: Ideologies & Culture"
+  },
+  {
+    q: "The three waves of feminism include all of the following EXCEPT:",
+    opts: ["Suffrage and legal rights (1st wave)", "Workplace equality and reproductive rights (2nd wave)", "Intersectionality — race, class and gender (3rd wave)", "Anti-globalization and economic nationalism (4th wave)"],
+    ans: 3, diff: "medium", topic: "L6: Ideologies & Culture"
+  },
+  {
+    q: "Social democracy differs from revolutionary Marxism primarily in that it:",
+    opts: ["Rejects all critique of capitalism", "Pursues socialist goals through parliamentary reform rather than revolution", "Advocates for immediate abolition of private property", "Supports authoritarian state control of the economy"],
+    ans: 1, diff: "medium", topic: "L6: Ideologies & Culture"
+  },
+  {
+    q: "The transformative level of political consciousness refers to:",
+    opts: ["Voting out of habit without deep understanding", "Critically evaluating institutions and questioning authority", "Collective action to reshape the political order", "Participating in ceremonial political rituals"],
+    ans: 2, diff: "medium", topic: "L6: Ideologies & Culture"
+  },
+  {
+    q: "Will Kymlicka and Charles Taylor are theorists associated with which modern political ideology?",
+    opts: ["Neo-liberalism", "Environmentalism", "Multiculturalism", "Nationalism"],
+    ans: 2, diff: "hard", topic: "L6: Ideologies & Culture"
+  },
+
+  // ======== LECTURE 7: State and Civil Society ========
+  {
+    q: "Karl Wittfogel's hydraulic theory of state origin argues that early states formed to:",
+    opts: ["Defend against nomadic invasions", "Manage large-scale irrigation systems in arid regions", "Consolidate trade routes and merchant guilds", "Impose religious authority over scattered populations"],
+    ans: 1, diff: "medium", topic: "L7: State & Civil Society"
+  },
+  {
+    q: "Which of the following is NOT a defining characteristic of the state according to political science?",
+    opts: ["Territory", "Sovereignty", "Cultural homogeneity", "Legitimacy"],
+    ans: 2, diff: "easy", topic: "L7: State & Civil Society"
+  },
+  {
+    q: "Kazakhstan is classified as what type of state based on territorial organization?",
+    opts: ["Federal state", "Confederate state", "Unitary state", "Asymmetric state"],
+    ans: 2, diff: "easy", topic: "L7: State & Civil Society"
+  },
+  {
+    q: "Juan Linz (1964) argued that authoritarianism differs from totalitarianism primarily because:",
+    opts: ["Authoritarian regimes always have democratic elections", "Authoritarianism allows limited pluralism and tolerates non-political freedoms", "Authoritarian regimes have more elaborate ideologies than totalitarian ones", "Authoritarian systems rely exclusively on military force"],
+    ans: 1, diff: "medium", topic: "L7: State & Civil Society"
+  },
+  {
+    q: "Hannah Arendt is most associated with the academic study of:",
+    opts: ["Social contract theory and classical liberalism", "Totalitarianism and the origins of political evil", "Elite theory and political oligarchy", "Environmental political thought"],
+    ans: 1, diff: "medium", topic: "L7: State & Civil Society"
+  },
+  {
+    q: "Civil society refers to:",
+    opts: ["Government institutions and public administration", "The autonomous sphere of associations between state and family (NGOs, media, unions)", "The body of civil law governing private disputes", "Politically mobilized citizens who form parties"],
+    ans: 1, diff: "easy", topic: "L7: State & Civil Society"
+  },
+  {
+    q: "Which theorist argued the state originated from the natural expansion of the family to village to polis?",
+    opts: ["Karl Marx", "Thomas Hobbes", "Aristotle", "Max Weber"],
+    ans: 2, diff: "medium", topic: "L7: State & Civil Society"
+  },
+  {
+    q: "Saudi Arabia is an example of which type of monarchy?",
+    opts: ["Constitutional monarchy", "Parliamentary monarchy", "Absolute monarchy", "Elective monarchy"],
+    ans: 2, diff: "easy", topic: "L7: State & Civil Society"
+  },
+  {
+    q: "A key challenge facing civil society in Kazakhstan includes:",
+    opts: ["Excessive power of trade unions relative to government", "Restrictive laws on assembly and limited political freedoms", "Overrepresentation of foreign NGOs crowding out local organizations", "Too much media pluralism overwhelming government communication"],
+    ans: 1, diff: "medium", topic: "L7: State & Civil Society"
+  },
+  {
+    q: "Which regime type aims to control ALL aspects of life including private life, not just political opposition?",
+    opts: ["Authoritarian", "Illiberal democratic", "Totalitarian", "Oligarchic"],
+    ans: 2, diff: "easy", topic: "L7: State & Civil Society"
+  },
+
+  // ======== LECTURE 8: Electoral Systems, Parties & Movements ========
+  {
+    q: "Duverger's Law states that first-past-the-post (plurality) electoral systems tend to produce:",
+    opts: ["Multi-party systems", "Two-party systems", "Dominant party systems", "No-party systems"],
+    ans: 1, diff: "easy", topic: "L8: Electoral & Parties"
+  },
+  {
+    q: "In a proportional representation (PR) system, seats are allocated:",
+    opts: ["To the candidate with the most votes in each district", "In proportion to each party's share of the total vote", "Through a two-round runoff among top candidates", "By lottery weighted by regional population"],
+    ans: 1, diff: "easy", topic: "L8: Electoral & Parties"
+  },
+  {
+    q: "What electoral threshold must parties clear to enter Kazakhstan's Majilis (lower house)?",
+    opts: ["3%", "5%", "7%", "10%"],
+    ans: 1, diff: "medium", topic: "L8: Electoral & Parties"
+  },
+  {
+    q: "How many seats does Kazakhstan's Majilis have after the 2023 electoral reforms?",
+    opts: ["77", "88", "98", "107"],
+    ans: 2, diff: "hard", topic: "L8: Electoral & Parties"
+  },
+  {
+    q: "A 'catch-all party' primarily seeks to:",
+    opts: ["Represent a single social class or ideological movement", "Win the broadest possible electoral coalition by de-emphasizing ideology", "Advocate for radical transformation of the political system", "Serve the interests of rural constituencies exclusively"],
+    ans: 1, diff: "medium", topic: "L8: Electoral & Parties"
+  },
+  {
+    q: "Schattschneider identified four functions of political parties. Which of the following is NOT one of them?",
+    opts: ["Aggregating interests", "Packaging and branding voter options", "Providing judicial oversight of elections", "Mobilizing citizens and recruiting leaders"],
+    ans: 2, diff: "medium", topic: "L8: Electoral & Parties"
+  },
+  {
+    q: "Social movements differ from political parties primarily because they:",
+    opts: ["Lack any organizational structure", "Operate outside formal politics and don't seek to win elections directly", "Are always more radical ideologically than political parties", "Are banned in democratic systems"],
+    ans: 1, diff: "easy", topic: "L8: Electoral & Parties"
+  },
+  {
+    q: "Maurice Duverger's classification of political parties includes 'cadre/elite parties,' 'mass parties,' and:",
+    opts: ["Populist parties", "Revolutionary parties", "Catch-all parties", "Technocratic parties"],
+    ans: 2, diff: "medium", topic: "L8: Electoral & Parties"
+  },
+  {
+    q: "Which country uses a mixed-member proportional (MMP) electoral system widely regarded as a model of combining local representation with proportionality?",
+    opts: ["United Kingdom", "United States", "Germany", "France"],
+    ans: 2, diff: "medium", topic: "L8: Electoral & Parties"
+  },
+  {
+    q: "The #MeToo movement and Extinction Rebellion are examples of:",
+    opts: ["Political parties seeking electoral office", "Social movements operating outside formal politics", "Government-sponsored civil society programs", "Interest groups with formal parliamentary representation"],
+    ans: 1, diff: "easy", topic: "L8: Electoral & Parties"
+  },
+  {
+    q: "A 'dominant party system' is characterized by:",
+    opts: ["Legal banning of opposition parties", "One party consistently winning elections while opposition legally exists", "Coalition governments shared between two major parties", "Mandatory rotation of power between parties"],
+    ans: 1, diff: "medium", topic: "L8: Electoral & Parties"
+  },
+  {
+    q: "The purpose of an electoral threshold is to:",
+    opts: ["Guarantee representation for all minority groups", "Prevent extreme fragmentation by excluding very small parties", "Ensure geographic balance in parliament", "Limit campaign spending by major parties"],
+    ans: 1, diff: "easy", topic: "L8: Electoral & Parties"
+  },
+
+  // ======== LECTURE 9: National Security & Digital Threats ========
+  {
+    q: "What is the key distinction between 'disinformation' and 'misinformation'?",
+    opts: ["Disinformation targets governments; misinformation targets individuals", "Disinformation is deliberate; misinformation is spread without intent to deceive", "Disinformation uses digital media; misinformation uses print media", "Disinformation is illegal; misinformation is protected speech"],
+    ans: 1, diff: "easy", topic: "L9: Digital Security"
+  },
+  {
+    q: "According to MIT research, false news spreads how much faster than true news on social media?",
+    opts: ["20% faster", "45% faster", "70% faster", "90% faster"],
+    ans: 2, diff: "medium", topic: "L9: Digital Security"
+  },
+  {
+    q: "The World Health Organization coined the term 'infodemic' during:",
+    opts: ["The 2008 financial crisis", "The 2016 US election campaign", "The COVID-19 pandemic", "The Arab Spring of 2011"],
+    ans: 2, diff: "easy", topic: "L9: Digital Security"
+  },
+  {
+    q: "Deepfakes are primarily dangerous because they:",
+    opts: ["Slow down internet infrastructure", "Exploit human evolutionary trust in sensory experience to create false realities", "Always originate from state actors making attribution easy", "Can only affect public figures with no impact on ordinary citizens"],
+    ans: 1, diff: "medium", topic: "L9: Digital Security"
+  },
+  {
+    q: "Kazakhstan's Article 23 on information security legally equates deliberate disinformation with which threats?",
+    opts: ["Cyberterrorism and economic espionage", "Terrorism and separatism as national security threats", "Election interference and constitutional subversion", "Organized crime and money laundering"],
+    ans: 1, diff: "hard", topic: "L9: Digital Security"
+  },
+  {
+    q: "OSINT stands for:",
+    opts: ["Online Security Intelligence Network Technology", "Open-Source Intelligence", "Operational Security Intelligence Toolkit", "Organized Surveillance and Information Network"],
+    ans: 1, diff: "easy", topic: "L9: Digital Security"
+  },
+  {
+    q: "Hybrid warfare combines conventional military operations with which of the following?",
+    opts: ["Only economic sanctions and trade restrictions", "Cyber attacks, disinformation, economic pressure and proxy forces", "Nuclear deterrence and space-based weapons", "International legal challenges and diplomatic isolation"],
+    ans: 1, diff: "medium", topic: "L9: Digital Security"
+  },
+  {
+    q: "The 2022 deepfake video of Ukrainian President Zelensky falsely showed him:",
+    opts: ["Meeting secretly with Russian officials", "Calling Ukrainian soldiers to surrender", "Ordering missile strikes on civilian areas", "Accepting defeat in eastern Ukraine"],
+    ans: 1, diff: "medium", topic: "L9: Digital Security"
+  },
+  {
+    q: "Hannah Arendt's quote about constant lying warns that the greatest danger is that people:",
+    opts: ["Begin to believe all lies presented to them", "Eventually stop believing in anything at all", "Become unable to distinguish between governments", "Lose all motivation to participate in politics"],
+    ans: 1, diff: "medium", topic: "L9: Digital Security"
+  },
+  {
+    q: "Kazakhstan's 'Cyber Shield' program is designed to:",
+    opts: ["Censor political opposition online", "Strengthen cyber defense and protect critical digital infrastructure", "Create state-controlled social media platforms", "Block access to foreign news sources"],
+    ans: 1, diff: "easy", topic: "L9: Digital Security"
+  },
+  {
+    q: "The 'Pizzagate' conspiracy theory in the 2016 US election is an example of which phenomenon?",
+    opts: ["Hybrid warfare using proxy military forces", "Disinformation campaign causing real-world harm (armed man stormed restaurant)", "Legitimate investigative journalism being censored", "Government-sponsored counter-disinformation effort"],
+    ans: 1, diff: "hard", topic: "L9: Digital Security"
+  },
+  {
+    q: "Fact-check KZ and Stop Fake KZ are examples of Kazakhstan's efforts to build:",
+    opts: ["State media monopoly", "National digital resilience against disinformation", "Cybersecurity offensive capabilities", "Government surveillance of social media"],
+    ans: 1, diff: "medium", topic: "L9: Digital Security"
+  },
+  {
+    q: "Post-truth politics refers to a political environment where:",
+    opts: ["Politicians systematically fact-check each other's claims", "Emotion and personal belief consistently outweigh objective fact", "Digital media provides perfectly accurate real-time information", "Citizens demand higher standards of governmental transparency"],
+    ans: 1, diff: "easy", topic: "L9: Digital Security"
+  },
+  {
+    q: "During Kazakhstan's January 2022 events, social media primarily:",
+    opts: ["Helped coordinate effective government crisis response", "Flooded with disinformation complicating crisis management", "Was shut down entirely preventing any communication", "Enabled transparent international observation of events"],
+    ans: 1, diff: "medium", topic: "L9: Digital Security"
+  },
+
+  // ======== LECTURE 10: World Policy & International Relations ========
+  {
+    q: "In International Relations theory, Realism holds that the international system is characterized by:",
+    opts: ["Cooperation managed through international law", "Anarchy — no central authority governs state behavior", "Social construction through shared norms and ideas", "Democratic peace between states with common values"],
+    ans: 1, diff: "easy", topic: "L10: International Relations"
+  },
+  {
+    q: "Alexander Wendt's famous phrase 'Anarchy is what states make of it' represents which IR theory?",
+    opts: ["Classical Realism", "Neo-Liberalism", "Constructivism", "Dependency Theory"],
+    ans: 2, diff: "medium", topic: "L10: International Relations"
+  },
+  {
+    q: "The Democratic Peace Theory — the idea that democracies rarely go to war with each other — is associated with which IR tradition?",
+    opts: ["Realism", "Liberalism", "Constructivism", "Marxism"],
+    ans: 1, diff: "medium", topic: "L10: International Relations"
+  },
+  {
+    q: "The UN Security Council has how many permanent members with veto power?",
+    opts: ["3", "4", "5", "7"],
+    ans: 2, diff: "easy", topic: "L10: International Relations"
+  },
+  {
+    q: "Kazakhstan's foreign policy is best described as:",
+    opts: ["Pro-Western and NATO-aligned", "Multi-vector — balancing Russia, China, EU and the USA", "Exclusively focused on Central Asian regional integration", "Neutral and isolationist following Swiss model"],
+    ans: 1, diff: "easy", topic: "L10: International Relations"
+  },
+  {
+    q: "NATO's Article 5 principle states that:",
+    opts: ["Member states must maintain defense spending above 2% of GDP", "An attack against one member is an attack against all members", "Nuclear weapons can only be used with unanimous NATO approval", "New members require unanimous consent of all existing members"],
+    ans: 1, diff: "easy", topic: "L10: International Relations"
+  },
+  {
+    q: "The EU is most cited as evidence for which IR theoretical tradition?",
+    opts: ["Realism — power balancing among European states", "Liberalism — cooperation through economic interdependence and institutions", "Constructivism — identity formation among European nations", "Marxism — economic integration serving ruling class interests"],
+    ans: 1, diff: "medium", topic: "L10: International Relations"
+  },
+  {
+    q: "Hans Morgenthau and Kenneth Waltz are key thinkers associated with which IR theory?",
+    opts: ["Liberalism", "Constructivism", "Realism", "Critical Theory"],
+    ans: 2, diff: "medium", topic: "L10: International Relations"
+  },
+  {
+    q: "A unipolar international system is characterized by:",
+    opts: ["Equal distribution of power among many states", "One dominant power significantly stronger than all others", "Two competing superpowers dividing the world into blocs", "Regional organizations replacing nation-states as primary actors"],
+    ans: 1, diff: "easy", topic: "L10: International Relations"
+  },
+  {
+    q: "Greta Thunberg and Malala Yusafzai are described in IR theory as 'norm entrepreneurs' because:",
+    opts: ["They hold formal positions in international governmental organizations", "They advocate for new international norms and pressure states to act without formal power", "They represent national governments in UN negotiations", "They control multinational corporations with global economic influence"],
+    ans: 1, diff: "medium", topic: "L10: International Relations"
+  },
+  {
+    q: "Kazakhstan's participation in the Belt and Road Initiative is primarily a relationship with:",
+    opts: ["Russia through the CSTO", "China through economic investment and infrastructure", "The European Union through the Enhanced Partnership Agreement", "The United States through bilateral security cooperation"],
+    ans: 1, diff: "easy", topic: "L10: International Relations"
+  },
+  {
+    q: "The Cold War (1947-1991) international system is best described as:",
+    opts: ["Unipolar (US dominance)", "Bipolar (USA vs USSR)", "Multipolar (multiple great powers)", "Liberal order (institutions managing anarchy)"],
+    ans: 1, diff: "easy", topic: "L10: International Relations"
+  },
+  {
+    q: "Economic interdependence reduces conflict according to liberal IR theory because:",
+    opts: ["Richer countries never go to war with each other", "War would harm both sides economically, making it irrational", "Economic integration transfers sovereignty to supranational bodies", "Trade creates cultural homogeneity eliminating nationalist tensions"],
+    ans: 1, diff: "medium", topic: "L10: International Relations"
+  },
+  {
+    q: "The WHO, WTO and UNESCO are all examples of which type of international actor?",
+    opts: ["Multinational corporations", "Non-governmental organizations", "Intergovernmental organizations", "Epistemic communities"],
+    ans: 2, diff: "easy", topic: "L10: International Relations"
+  },
+  {
+    q: "Modernization theory differs from Westernization theory in that modernization:",
+    opts: ["Requires adopting specifically Western cultural values and institutions", "Is a universal transformation from traditional to modern systems driven by industrialization", "Only occurs through colonial imposition by Western powers", "Exclusively applies to European societies"],
+    ans: 1, diff: "hard", topic: "L10: International Relations"
+  },
+  {
+    q: "Kazakhstan hosted the Astana peace process for which conflict?",
+    opts: ["Afghan civil war", "Syrian civil war", "Ukrainian conflict", "Nagorno-Karabakh dispute"],
+    ans: 1, diff: "medium", topic: "L10: International Relations"
+  },
+  {
+    q: "Thucydides is considered a foundational thinker for which IR tradition because of his account of the Peloponnesian War?",
+    opts: ["Liberalism", "Constructivism", "Realism", "Idealism"],
+    ans: 2, diff: "hard", topic: "L10: International Relations"
+  },
+  {
+    q: "Which of the following is an advantage of globalization according to the course material?",
+    opts: ["Elimination of cultural diversity worldwide", "Job displacement in manufacturing sectors", "Expanded trade, lower prices and poverty reduction", "Increased national sovereignty for smaller states"],
+    ans: 2, diff: "medium", topic: "L10: International Relations"
+  }
+];
+
+// ===== STATE =====
+let questions = [];
+let currentIndex = 0;
+let userAnswers = {};
+let correctCount = 0;
+let incorrectCount = 0;
+
+// ===== SHUFFLE HELPER =====
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// ===== START QUIZ =====
+function startQuiz() {
+  // Shuffle questions and shuffle answer options per question
+  questions = shuffle(ALL_QUESTIONS).map(q => {
+    // Create shuffled options with correct answer tracking
+    const indexed = q.opts.map((o, i) => ({ text: o, orig: i }));
+    const shuffled = shuffle(indexed);
+    const newCorrect = shuffled.findIndex(x => x.orig === q.ans);
+    return {
+      q: q.q,
+      opts: shuffled.map(x => x.text),
+      ans: newCorrect,
+      diff: q.diff,
+      topic: q.topic
+    };
+  });
+  currentIndex = 0;
+  userAnswers = {};
+  correctCount = 0;
+  incorrectCount = 0;
+  showScreen('quiz');
+  renderQuestion();
+}
+
+// ===== RENDER QUESTION =====
+function renderQuestion() {
+  const q = questions[currentIndex];
+  const total = questions.length;
+  const answered = userAnswers[currentIndex];
+
+  // Counter & progress
+  document.getElementById('q-num').textContent = currentIndex + 1;
+  document.getElementById('q-total').textContent = total;
+  document.getElementById('score-correct').textContent = correctCount;
+  document.getElementById('score-incorrect').textContent = incorrectCount;
+
+  const pct = Math.round((currentIndex / total) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = pct + '% complete';
+
+  // Difficulty badge
+  const badge = document.getElementById('diff-badge');
+  badge.textContent = q.diff.charAt(0).toUpperCase() + q.diff.slice(1);
+  badge.className = 'difficulty-badge diff-' + q.diff;
+
+  // Topic tag
+  document.getElementById('topic-tag').textContent = q.topic;
+
+  // Question text
+  document.getElementById('question-text').textContent = q.q;
+
+  // Options
+  const grid = document.getElementById('options-grid');
+  grid.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D'];
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option';
+    btn.innerHTML = `<span class="option-letter">${letters[i]}</span><span class="option-text">${opt}</span>`;
+    btn.onclick = () => selectAnswer(i);
+
+    if (answered !== undefined) {
+      btn.disabled = true;
+      if (i === q.ans) btn.classList.add('correct');
+      if (i === answered && answered !== q.ans) btn.classList.add('wrong');
+    }
+    grid.appendChild(btn);
+  });
+
+  // Feedback
+  const fb = document.getElementById('feedback-box');
+  fb.className = 'feedback-box';
+  if (answered !== undefined) {
+    if (answered === q.ans) {
+      fb.className = 'feedback-box correct show';
+      fb.innerHTML = '<span class="feedback-icon">✓</span> Correct! Well done.';
+    } else {
+      fb.className = 'feedback-box wrong show';
+      const correct = letters[q.ans];
+      fb.innerHTML = `<span class="feedback-icon">✗</span> Incorrect. The correct answer is <strong>${correct}: ${q.opts[q.ans]}</strong>`;
+    }
+  }
+
+  // Nav buttons
+  document.getElementById('btn-prev').style.display = currentIndex === 0 ? 'none' : '';
+  const nextBtn = document.getElementById('btn-next');
+  if (currentIndex === total - 1) {
+    nextBtn.textContent = answered !== undefined ? '🏁 View Results' : 'Skip to Results';
+    nextBtn.style.display = '';
+  } else {
+    nextBtn.textContent = answered !== undefined ? 'Next →' : 'Skip →';
+  }
+}
+
+// ===== SELECT ANSWER =====
+function selectAnswer(optIndex) {
+  if (userAnswers[currentIndex] !== undefined) return;
+
+  const q = questions[currentIndex];
+  userAnswers[currentIndex] = optIndex;
+
+  if (optIndex === q.ans) {
+    correctCount++;
+  } else {
+    incorrectCount++;
+  }
+
+  // Update score display
+  document.getElementById('score-correct').textContent = correctCount;
+  document.getElementById('score-incorrect').textContent = incorrectCount;
+
+  // Style options
+  const opts = document.querySelectorAll('.option');
+  opts.forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === q.ans) btn.classList.add('correct');
+    if (i === optIndex && optIndex !== q.ans) btn.classList.add('wrong');
+  });
+
+  // Feedback
+  const fb = document.getElementById('feedback-box');
+  const letters = ['A', 'B', 'C', 'D'];
+  if (optIndex === q.ans) {
+    fb.className = 'feedback-box correct show';
+    fb.innerHTML = '<span class="feedback-icon">✓</span> Correct! Well done.';
+  } else {
+    fb.className = 'feedback-box wrong show';
+    fb.innerHTML = `<span class="feedback-icon">✗</span> Incorrect. The correct answer is <strong>${letters[q.ans]}: ${q.opts[q.ans]}</strong>`;
+  }
+
+  // Update next button
+  const nextBtn = document.getElementById('btn-next');
+  if (currentIndex === questions.length - 1) {
+    nextBtn.textContent = '🏁 View Results';
+  } else {
+    nextBtn.textContent = 'Next →';
+  }
+}
+
+// ===== NEXT / PREV =====
+function nextQuestion() {
+  if (currentIndex === questions.length - 1) {
+    showResultsScreen();
+  } else {
+    currentIndex++;
+    renderQuestion();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+
+function prevQuestion() {
+  if (currentIndex > 0) {
+    currentIndex--;
+    renderQuestion();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+
+// ===== RESULTS =====
+function showResultsScreen() {
+  const total = questions.length;
+  const pct = Math.round((correctCount / total) * 100);
+
+  document.getElementById('res-correct').textContent = correctCount;
+  document.getElementById('res-incorrect').textContent = incorrectCount;
+  document.getElementById('res-total').textContent = total;
+  document.getElementById('res-pct').textContent = pct + '%';
+
+  // Circle
+  document.getElementById('score-circle').style.setProperty('--pct', pct);
+
+  // Performance label
+  let label, sub, labelColor;
+  if (pct >= 90) { label = '🏆 Excellent!'; sub = 'Outstanding performance! You have mastered the material.'; labelColor = '#10b981'; }
+  else if (pct >= 75) { label = '🌟 Very Good!'; sub = 'Strong knowledge. Review a few missed areas to perfect your score.'; labelColor = '#60a5fa'; }
+  else if (pct >= 60) { label = '👍 Good'; sub = 'Solid foundation. Focus on the topics where you made mistakes.'; labelColor = '#f59e0b'; }
+  else if (pct >= 45) { label = '📖 Needs Review'; sub = 'More study required. Use the review section to target weak areas.'; labelColor = '#f87171'; }
+  else { label = '🔴 Insufficient'; sub = 'Significant gaps remain. Return to the lectures and try again.'; labelColor = '#ef4444'; }
+
+  const perfEl = document.getElementById('perf-label');
+  perfEl.textContent = label;
+  perfEl.style.color = labelColor;
+  document.getElementById('perf-sub').textContent = sub;
+
+  showScreen('results');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showResults() {
+  showScreen('results');
+}
+
+// ===== REVIEW =====
+function showReview() {
+  const list = document.getElementById('review-list');
+  list.innerHTML = '';
+
+  const mistakes = Object.entries(userAnswers).filter(([i, a]) => parseInt(a) !== questions[parseInt(i)].ans);
+
+  if (mistakes.length === 0) {
+    list.innerHTML = '<div class="empty-review"><div class="big">🎉</div>No mistakes! You answered all questions correctly.</div>';
+  } else {
+    const letters = ['A', 'B', 'C', 'D'];
+    mistakes.forEach(([idx, userAns]) => {
+      const q = questions[parseInt(idx)];
+      const div = document.createElement('div');
+      div.className = 'review-item';
+      div.innerHTML = `
+        <div class="review-item-header">
+          <span class="review-q-num">Q${parseInt(idx)+1}</span>
+          <span class="review-q-text">${q.q}</span>
+        </div>
+        <div class="review-answers">
+          <div class="review-answer wrong">
+            <span class="review-answer-icon">✗</span>
+            <span><strong>Your answer:</strong> ${letters[userAns]}: ${q.opts[userAns]}</span>
+          </div>
+          <div class="review-answer correct">
+            <span class="review-answer-icon">✓</span>
+            <span><strong>Correct answer:</strong> ${letters[q.ans]}: ${q.opts[q.ans]}</span>
+          </div>
+        </div>
+      `;
+      list.appendChild(div);
+    });
+  }
+
+  showScreen('review');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ===== RESTART =====
+function restartQuiz() {
+  startQuiz();
+}
+
+// ===== SHOW SCREEN =====
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+}
+</script>
+</body>
+</html>
